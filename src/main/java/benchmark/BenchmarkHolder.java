@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 @State(Scope.Benchmark)
 @Fork(value = 1, warmups = 2)
-@Warmup(iterations = 10, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 5, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 5, timeUnit = TimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.Throughput)
 public class BenchmarkHolder {
 

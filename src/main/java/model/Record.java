@@ -1,20 +1,22 @@
 package model;
 
 public class Record {
-    Boolean male, female;
-    String classifier, unitName;
+    Boolean male;
+    Boolean female;
+    String classifier;
+    String unitName;
 
     public Record(String classifier, String unitName) {
         this.classifier = classifier;
         this.unitName = unitName;
     }
 
-    public Boolean isMale() {
-        return male != null ? male : false;
+    public boolean isMale() {
+        return male != null && male;
     }
 
-    public Boolean isFemale() {
-        return female != null ? female : false;
+    public boolean isFemale() {
+        return female != null && female;
     }
 
     public String getClassifier() {

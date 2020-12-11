@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @BenchmarkMode(Mode.Throughput)
 public class BenchmarkHolder {
 
-    @Param({"2", "4", "6", "8", "10", "15", "20"})
+    @Param({"2", "4", "6", "8", "10", "15", "20", "100", "1000", "10000"})
     public int numberOfRecordClassifiers;
 
     public List<Record> TESTING_DATA_SET;
@@ -51,11 +51,66 @@ public class BenchmarkHolder {
                 result.add(record.getClassifier());
                 continue;
             }
-            if (record.isMale()) {
+            if (Boolean.TRUE.equals(record.isMale())) {
                 ++checkPairMap.get(record.getClassifier()).sumOfMale;
             }
-            if (record.isFemale()) {
+            if (Boolean.TRUE.equals(record.isFemale())) {
                 ++checkPairMap.get(record.getClassifier()).sumOfFemale;
+            }
+        }
+        return result;
+    }
+
+    @Benchmark
+    public List<String> for_loop_with_two_map() {
+        Map<String, Integer> maleMap = new HashMap<>();
+        Map<String, Integer> femaleMap = new HashMap<>();
+        List<String> result = new ArrayList<>();
+        for (Record record : TESTING_DATA_SET) {
+            if (!maleMap.containsKey(record.getClassifier()) && !femaleMap.containsKey(record.getClassifier())) {
+                maleMap.put(record.getClassifier(), 0);
+                femaleMap.put(record.getClassifier(), 0);
+            }
+            if (result.contains(record.getClassifier())) {
+                continue;
+            }
+            if (maleMap.get(record.getClassifier()) > 1 || femaleMap.get(record.getClassifier()) > 1) {
+                result.add(record.getClassifier());
+                continue;
+            }
+            if (Boolean.TRUE.equals(record.isMale())) {
+                int male = maleMap.get(record.getClassifier());
+                maleMap.put(record.getClassifier(), ++male);
+            }
+            if (Boolean.TRUE.equals(record.isFemale())) {
+                int female = femaleMap.get(record.getClassifier());
+                femaleMap.put(record.getClassifier(), ++female);
+            }
+        }
+        return result;
+    }
+
+    @Benchmark
+    public List<String> pure_for_loop() {
+        List<String> tempMale = new ArrayList<>();
+        List<String > tempFemale = new ArrayList<>();
+        List<String> result = new ArrayList<>();
+        for (Record record : TESTING_DATA_SET) {
+            if (result.contains(record.getClassifier())) {
+                continue;
+            }
+            if (Collections.frequency(tempMale, record.getClassifier()) > 1
+                    || Collections.frequency(tempFemale, record.getClassifier()) > 1) {
+                result.add(record.getClassifier());
+                tempFemale.remove(record.getClassifier());
+                tempMale.remove(record.getClassifier());
+                continue;
+            }
+            if (Boolean.TRUE.equals(record.isMale())) {
+                tempMale.add(record.getClassifier());
+            }
+            if (Boolean.TRUE.equals(record.isFemale())) {
+                tempFemale.add(record.getClassifier());
             }
         }
         return result;
